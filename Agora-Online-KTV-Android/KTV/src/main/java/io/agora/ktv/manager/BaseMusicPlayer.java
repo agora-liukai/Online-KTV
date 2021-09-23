@@ -322,6 +322,7 @@ public abstract class BaseMusicPlayer extends IRtcEngineEventHandler implements 
 
     public void setMusicVolume(int v) {
         mPlayer.adjustPlayoutVolume(v);
+        mPlayer.adjustPublishSignalVolume(v);
     }
 
     public void setMicVolume(int v) {

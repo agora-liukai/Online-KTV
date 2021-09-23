@@ -191,6 +191,7 @@ public class RoomActivity extends DataBindBaseActivity<KtvActivityRoomBinding> i
                         mMusicPlayer.switchRole(role);
                     }
                     RoomManager.Instance(RoomActivity.this).getRtcEngine().setClientRole(role);
+                    RoomManager.Instance(RoomActivity.this).getRtcEngine().startPreview();
                 }
             } else if (member.getRole() == AgoraMember.Role.Listener) {
                 mRoomSpeakerAdapter.deleteItem(member);
@@ -698,7 +699,6 @@ public class RoomActivity extends DataBindBaseActivity<KtvActivityRoomBinding> i
                     @Override
                     public void onComplete() {
                         mDataBinding.ivMic.setEnabled(true);
-
                         ChannelMediaOptions options = new ChannelMediaOptions();
                         options.publishAudioTrack = !newValue;
                         RoomManager.Instance(RoomActivity.this).getRtcEngine().updateChannelMediaOptions(options);
@@ -739,7 +739,7 @@ public class RoomActivity extends DataBindBaseActivity<KtvActivityRoomBinding> i
             @Override
             public void onEarChanged(boolean isEar) {
                 RoomActivity.this.isEar = isEar;
-                RoomManager.Instance(RoomActivity.this).getRtcEngine().enableInEarMonitoring(isEar);
+                RoomManager.Instance(RoomActivity.this).getRtcEngine().enableInEarMonitoring(isEar, Constants.EAR_MONITORING_FILTER_NONE);
             }
 
             @Override

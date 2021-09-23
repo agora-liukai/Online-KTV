@@ -41,11 +41,14 @@ import io.agora.rtc2.IRtcEngineEventHandler;
 import io.agora.rtc2.RtcEngine;
 import io.agora.rtc2.RtcEngineConfig;
 import io.agora.rtc2.RtcEngineEx;
+import io.agora.rtc2.video.VideoEncoderConfiguration;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.functions.Consumer;
+
+import static io.agora.rtc2.video.VideoEncoderConfiguration.VD_120x120;
 
 /**
  * 房间控制
@@ -425,6 +428,7 @@ public final class RoomManager {
             AgoraMember memberLocal = memberHashMap.get(memberRemote.getId());
             if (memberLocal != null && memberLocal.getRole() != memberRemote.getRole()) {
                 memberLocal.setRole(memberRemote.getRole());
+                memberLocal.setStreamId(memberRemote.getStreamId());
                 onMemberRoleChanged(memberLocal);
             }
 
@@ -775,12 +779,24 @@ public final class RoomManager {
             emitterJoinRTC = emitter;
             getRtcEngine().setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
             getRtcEngine().enableAudio();
+            getRtcEngine().enableVideo();
+            getRtcEngine().setParameters("{\"rtc.audio.opensl.mode\":0}");
+            getRtcEngine().setParameters("{\"rtc.audio_fec\":[3,2]}");
+            getRtcEngine().setParameters("{\"rtc.audio_resend\":false}");
+            getRtcEngine().setParameters("{\"rtc.audio.max_neteq_packets\":2}");
+            VideoEncoderConfiguration configuration = new VideoEncoderConfiguration();
+            configuration.dimensions = VD_120x120;
+            configuration.frameRate = 10;
+            getRtcEngine().setVideoEncoderConfiguration(configuration);
             if (ObjectsCompat.equals(mMine, owner)) {
                 getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+                getRtcEngine().startPreview();
             } else if (mMine.getRole() == AgoraMember.Role.Speaker) {
                 getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+                getRtcEngine().startPreview();
             } else {
-                getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
+                getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+                getRtcEngine().startPreview();
             }
 
             mLoggerRTC.i("joinRTC() called with: results = [%s]", mRoom);

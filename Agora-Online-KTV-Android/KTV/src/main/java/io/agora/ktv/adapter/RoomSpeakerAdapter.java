@@ -1,7 +1,10 @@
 package io.agora.ktv.adapter;
 
 import android.content.Context;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +21,9 @@ import io.agora.ktv.R;
 import io.agora.ktv.bean.MemberMusicModel;
 import io.agora.ktv.databinding.KtvItemRoomSpeakerBinding;
 import io.agora.ktv.manager.RoomManager;
+import io.agora.rtc2.video.VideoCanvas;
+
+import static io.agora.rtc2.Constants.RENDER_MODE_HIDDEN;
 
 /**
  * 房间说话者列表
@@ -86,7 +92,26 @@ public class RoomSpeakerAdapter extends BaseRecyclerViewAdapter<AgoraMember, Roo
             return;
         }
 
+
         Context mContext = holder.itemView.getContext();
+
+
+        SurfaceView surfaceView = RoomManager.Instance(mContext).getRtcEngine().CreateRendererView(mContext);
+//        if (foreGroundVideo.getChildCount() > 0) {
+//            foreGroundVideo.removeAllViews();
+//        }
+        if(holder.mDataBinding.videoView.getChildCount() <= 2){
+            holder.mDataBinding.videoView.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+            if (RoomManager.Instance(mContext).getMine().getId() == item.getId())
+            {
+                RoomManager.Instance(mContext).getRtcEngine().setupLocalVideo(new VideoCanvas(surfaceView, RENDER_MODE_HIDDEN, 0));
+            }
+            else if (item.getStreamId() != 0){
+                RoomManager.Instance(mContext).getRtcEngine().setupRemoteVideo(new VideoCanvas(surfaceView, RENDER_MODE_HIDDEN, item.getStreamId().intValue()));
+            }
+        }
+
         if (item.getRole() == AgoraMember.Role.Owner) {
             holder.mDataBinding.tvName.setText(mContext.getString(R.string.ktv_room_owner));
         }
@@ -95,7 +120,6 @@ public class RoomSpeakerAdapter extends BaseRecyclerViewAdapter<AgoraMember, Roo
         if (mUser != null) {
             Glide.with(holder.itemView)
                     .load(mUser.getAvatarRes())
-                    .circleCrop()
                     .into(holder.mDataBinding.ivHead);
         } else {
             holder.mDataBinding.ivHead.setImageResource(R.mipmap.default_head);

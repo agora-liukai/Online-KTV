@@ -49,7 +49,6 @@ public class AgoraMember implements Parcelable {
     private Role role = Role.Listener;
     private int isMuted = 0;
     private int isSelfMuted = 0;
-
     private User user;
 
     public AgoraMember() {
