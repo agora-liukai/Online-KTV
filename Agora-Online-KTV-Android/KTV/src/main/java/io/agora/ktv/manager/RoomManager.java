@@ -663,7 +663,8 @@ public final class RoomManager {
             SyncManager.Instance()
                     .getRoom(room.getId())
                     .collection(AgoraMember.TABLE_NAME)
-                    .query(new Query().whereEqualTo(AgoraMember.COLUMN_USERID, member.getUserId()))
+                    .query(new Query().whereEqualTo(AgoraMember.COLUMN_USERID, member.getUserId())
+                            .whereEqualTo(AgoraMember.COLUMN_ROOMID, room.getId()))
                     .get(new SyncManager.DataListCallback() {
                         @Override
                         public void onSuccess(List<AgoraObject> result) {
@@ -794,7 +795,7 @@ public final class RoomManager {
                 getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
                 getRtcEngine().startPreview();
             } else {
-                getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+                getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
                 getRtcEngine().startPreview();
             }
 

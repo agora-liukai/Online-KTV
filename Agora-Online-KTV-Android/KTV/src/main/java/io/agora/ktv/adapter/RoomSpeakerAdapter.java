@@ -90,6 +90,9 @@ public class RoomSpeakerAdapter extends BaseRecyclerViewAdapter<AgoraMember, Roo
         holder.mDataBinding.tvName.setText(String.valueOf(position + 1));
         holder.mDataBinding.ivHead.setImageResource(R.mipmap.ktv_room_speaker_default);
 
+        if (holder.mDataBinding.videoView.getChildCount() > 1) {
+            holder.mDataBinding.videoView.removeViewAt(1);
+        }
         AgoraMember item = getItemData(position);
         if (item == null) {
             return;
@@ -100,12 +103,8 @@ public class RoomSpeakerAdapter extends BaseRecyclerViewAdapter<AgoraMember, Roo
 
 
         SurfaceView surfaceView = RoomManager.Instance(mContext).getRtcEngine().CreateRendererView(mContext);
-//        if (foreGroundVideo.getChildCount() > 0) {
-//            foreGroundVideo.removeAllViews();
-//        }
         if(holder.mDataBinding.videoView.getChildCount() <= 2){
             holder.mDataBinding.videoView.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
             if (RoomManager.Instance(mContext).getMine().getId() == item.getId())
             {
                 RoomManager.Instance(mContext).getRtcEngine().setupLocalVideo(new VideoCanvas(surfaceView, RENDER_MODE_HIDDEN, 0));
@@ -119,14 +118,14 @@ public class RoomSpeakerAdapter extends BaseRecyclerViewAdapter<AgoraMember, Roo
             holder.mDataBinding.tvName.setText(mContext.getString(R.string.ktv_room_owner));
         }
 
-        User mUser = item.getUser();
-        if (mUser != null) {
-            Glide.with(holder.itemView)
-                    .load(mUser.getAvatarRes())
-                    .into(holder.mDataBinding.ivHead);
-        } else {
-            holder.mDataBinding.ivHead.setImageResource(R.mipmap.default_head);
-        }
+//        User mUser = item.getUser();
+//        if (mUser != null) {
+//            Glide.with(holder.itemView)
+//                    .load(mUser.getAvatarRes())
+//                    .into(holder.mDataBinding.ivHead);
+//        } else {
+//            holder.mDataBinding.ivHead.setImageResource(R.mipmap.default_head);
+//        }
 
         MemberMusicModel mMusicModel = RoomManager.Instance(mContext).getMusicModel();
         if (mMusicModel != null) {
