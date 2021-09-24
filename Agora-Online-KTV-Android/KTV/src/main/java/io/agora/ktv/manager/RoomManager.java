@@ -783,7 +783,6 @@ public final class RoomManager {
             getRtcEngine().setParameters("{\"rtc.audio.opensl.mode\":0}");
             getRtcEngine().setParameters("{\"rtc.audio_fec\":[3,2]}");
             getRtcEngine().setParameters("{\"rtc.audio_resend\":false}");
-            getRtcEngine().setParameters("{\"rtc.audio.max_neteq_packets\":2}");
             VideoEncoderConfiguration configuration = new VideoEncoderConfiguration();
             configuration.dimensions = VD_120x120;
             configuration.frameRate = 10;
